@@ -2,6 +2,7 @@
   "name": "graphcool-lib",
   "version": "0.0.0",
   "scripts": {
+    "prepublish": "npm run build",
     "build": "rm -rf dist && tsc -d"
   },
   "main": "dist/src/index.js",
