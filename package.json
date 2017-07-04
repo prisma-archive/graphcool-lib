@@ -2,6 +2,7 @@
   "name": "graphcool-lib",
   "version": "0.0.0",
   "scripts": {
+    "test": "npm run build && rm -f test.out && ava --serial ./dist/test/*.js",
     "prepublish": "npm run build",
     "build": "rm -rf dist && tsc -d"
   },
@@ -13,9 +14,14 @@
     "README.md"
   ],
   "dependencies": {
-    "graphql-request": "^1.2.0"
+    "@types/node": "^7.0.14",
+    "graphql-request": "^1.2.0",
+    "source-map-support": "^0.4.15"
   },
   "devDependencies": {
-    "typescript": "^2.3.4"
+    "ava": "^0.19.1",
+    "fetch-mock": "^5.10.0",
+    "prettier": "^1.5.2",
+    "typescript": "^2.4.1"
   }
 }

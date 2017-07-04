@@ -39,7 +39,7 @@ export interface ScalarObject {
   [key: string]: ScalarOrScalarObject
 }
 
-type ScalarOrScalarObject = ScalarObject | number | string | boolean
+export type ScalarOrScalarObject = ScalarObject | number | string | boolean
 
 export interface APIOptions {
   token?: string
