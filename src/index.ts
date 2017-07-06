@@ -4,17 +4,18 @@ import { FunctionEvent, GraphcoolOptions, ScalarObject, APIOptions, APIEndpoint 
 export default class Graphcool {
 
   projectId: string
-  pat: string
+  pat?: string
   serverEndpoint: string
 
-  constructor(projectId: string, pat: string, options?: GraphcoolOptions) {
+  constructor(projectId: string, options?: GraphcoolOptions) {
     const mergedOptions = {
       serverEndpoint: 'https://api.graph.cool',
+      pat: undefined,
       ...options,
     }
 
     this.projectId = projectId
-    this.pat = pat
+    this.pat = mergedOptions.pat
     this.serverEndpoint = mergedOptions.serverEndpoint.replace(/\/$/, '')
   }
 
@@ -24,6 +25,8 @@ export default class Graphcool {
   }
 
   async generateAuthToken(nodeId: string, typeName: string, payload?: ScalarObject): Promise<string> {
+    this.checkPatIsSet('generateAuthToken')
+
     const request = `
       mutation {
         generateUserToken(input:{
@@ -38,7 +41,7 @@ export default class Graphcool {
         }
       }`
 
-    const result = await this.systemCLient().request(request)
+    const result = await this.systemClient().request(request)
     return result['token']
   }
 
@@ -62,13 +65,18 @@ export default class Graphcool {
     throw new Error('Not implemented yet')
   }
 
-  private systemCLient() {
+  private systemClient() {
     const url = `${this.serverEndpoint}/system`
     return new GraphQLClient(url)
   }
 
+  private checkPatIsSet(fn: string) {
+    if (this.pat == null) {
+      throw new Error(`Graphcool must be instantiated with a pat when calling '${fn}': new Graphcool('project-id', {pat: 'pat'})`)
+    }
+  }
 }
 
 export function fromEvent(event: FunctionEvent, options?: GraphcoolOptions): Graphcool {
-  return new Graphcool(event.context.graphcool.projectId, event.context.graphcool.pat, options)
+  return new Graphcool(event.context.graphcool.projectId, { pat: event.context.graphcool.pat, ...options })
 }

@@ -52,7 +52,7 @@ const testEvent: FunctionEvent = {
     environment: null,
     auth: {
       nodeId: 'test-node-id',
-      type: 'test-type',
+      typeName: 'test-type',
       token: 'test-token'
     },
     sessionCache: null

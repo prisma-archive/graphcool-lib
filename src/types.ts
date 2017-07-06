@@ -1,5 +1,6 @@
 export interface GraphcoolOptions {
   serverEndpoint?: string // by default: 'https://api.graph.cool'
+  pat?: string
 }
 
 export interface FunctionEvent {
@@ -31,7 +32,7 @@ export interface GraphcoolContext {
 
 export interface AuthContext {
   nodeId: string
-  type: string
+  typeName: string
   token: string
 }
 
