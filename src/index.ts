@@ -42,7 +42,7 @@ export default class Graphcool {
       }`
 
     const result = await this.systemClient().request(request)
-    return result['token']
+    return result['generateUserToken']['token']
   }
 
   async validateToken(token: string): Promise<boolean> {

@@ -25,7 +25,7 @@ test('api', async t => {
 test('generateAuthToken', async t => {
   const graphcool = fromEvent(testEvent)
 
-  fetchMock.post(systemApiEndpoint, {body:{data: {token: 'test-token'}}, headers: {'Content-Type': 'application/json'}})
+  fetchMock.post(systemApiEndpoint, {body:{data: {generateUserToken: {token: 'test-token'}}}, headers: {'Content-Type': 'application/json'}})
   const response = await graphcool.generateAuthToken('test-node-id', 'TestType')
 
   console.log(response)
