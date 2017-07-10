@@ -14,21 +14,23 @@ test('api', async t => {
   const graphcool = fromEvent(testEvent)
   const api = graphcool.api('simple/v1')
 
-  fetchMock.post(simpleApiEndpoint, {body:{data: {allCats: [{id: 'cat-1'}]}}, headers: {'Content-Type': 'application/json'}})
+  fetchMock.post(simpleApiEndpoint, { body: { data: { allCats: [{ id: 'cat-1' }] } }, headers: { 'Content-Type': 'application/json' } })
   const response = await api.request('{allCats{id}}')
 
-  console.log(response)
+  t.is(fetchMock.lastOptions().headers.Authorization, `Bearer ${testEvent.context.graphcool.pat}`)
+  t.deepEqual<any>(response, { allCats: [{ id: 'cat-1' }] })
 
-  t.deepEqual<any>(response, {allCats: [{id: 'cat-1'}]})
+  const apiWithCustomToken = graphcool.api('simple/v1', { token: 'custom-token' })
+  await apiWithCustomToken.request('{allCats{id}}')
+
+  t.is(fetchMock.lastOptions().headers.Authorization, `Bearer custom-token`)
 })
 
 test('generateAuthToken', async t => {
   const graphcool = fromEvent(testEvent)
 
-  fetchMock.post(systemApiEndpoint, {body:{data: {generateUserToken: {token: 'test-token'}}}, headers: {'Content-Type': 'application/json'}})
+  fetchMock.post(systemApiEndpoint, { body: { data: { generateUserToken: { token: 'test-token' } } }, headers: { 'Content-Type': 'application/json' } })
   const response = await graphcool.generateAuthToken('test-node-id', 'TestType')
-
-  console.log(response)
 
   t.is(response, 'test-token')
 })

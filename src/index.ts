@@ -21,7 +21,17 @@ export default class Graphcool {
 
   api(endpoint: APIEndpoint, options?: APIOptions): GraphQLClient {
     const url = `${this.serverEndpoint}/${endpoint}/${this.projectId}`
-    return new GraphQLClient(url)
+    const token = this.tokenOrPat(options)
+
+    if (token) {
+      return new GraphQLClient(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    } else {
+      return new GraphQLClient(url)
+    }
   }
 
   async generateAuthToken(nodeId: string, typeName: string, payload?: ScalarObject): Promise<string> {
@@ -73,6 +83,14 @@ export default class Graphcool {
   private checkPatIsSet(fn: string) {
     if (this.pat == null) {
       throw new Error(`Graphcool must be instantiated with a pat when calling '${fn}': new Graphcool('project-id', {pat: 'pat'})`)
+    }
+  }
+
+  private tokenOrPat(options?: APIOptions): string | undefined {
+    if (options && options.token) {
+      return options.token
+    } else {
+      return this.pat
     }
   }
 }
