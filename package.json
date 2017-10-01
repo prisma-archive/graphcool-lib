@@ -14,12 +14,12 @@
     "README.md"
   ],
   "dependencies": {
-    "@types/node": "^7.0.14",
+    "@types/node": "^8.0.31",
     "graphql-request": "^1.2.0",
     "source-map-support": "^0.4.15"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^0.22.0",
     "fetch-mock": "^5.10.0",
     "prettier": "^1.5.2",
     "typescript": "^2.4.1"
