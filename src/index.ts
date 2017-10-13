@@ -7,24 +7,24 @@ import { HttpLink } from 'apollo-link-http'
 export default class Graphcool {
 
   serviceId: string
-  rootToken?: string
+  token?: string
   serverEndpoint: string
 
   constructor(serviceId: string, options?: GraphcoolOptions) {
     const mergedOptions = {
       serverEndpoint: 'https://api.graph.cool',
-      rootToken: undefined,
+      token: undefined,
       ...options,
     }
 
     this.serviceId = serviceId
-    this.rootToken = mergedOptions.rootToken
+    this.token = mergedOptions.token
     this.serverEndpoint = mergedOptions.serverEndpoint.replace(/\/$/, '')
   }
 
   api(endpoint: APIEndpoint, options?: APIOptions): GraphQLClient {
     const url = `${this.serverEndpoint}/${endpoint}/${this.serviceId}`
-    const token = (options && options.token) ? options.token : this.rootToken
+    const token = (options && options.token) ? options.token : this.token
 
     if (token) {
       return new GraphQLClient(url, {
@@ -45,7 +45,7 @@ export default class Graphcool {
     const query = `
       mutation {
         generateNodeToken(input: {
-          rootToken: "${this.rootToken}"
+          rootToken: "${this.token}"
           serviceId: "${this.serviceId}"
           nodeId: "${nodeId}", 
           modelName: "${typeName}", 
@@ -71,7 +71,7 @@ export default class Graphcool {
   }
 
   async validateToken(token: string): Promise<boolean> {
-    return false
+    throw new Error('Not implemented yet')
   }
 
   checkPermissionQuery(query: string, variables?: any): Promise<boolean> {
@@ -90,13 +90,13 @@ export default class Graphcool {
     return new GraphQLClient(`${this.serverEndpoint}/system`)
   }
 
-  private checkRootTokenIsSet(fn: string) {
-    if (this.rootToken == null) {
-      throw new Error(`Graphcool must be instantiated with a rootToken when calling '${fn}': new Graphcool('service-id', {token: 'rootToken'})`)
+  private checkRootTokenIsSet(functionName: string): void {
+    if (this.token == null) {
+      throw new Error(`Graphcool must be instantiated with a rootToken when calling '${functionName}': new Graphcool('service-id', {token: 'rootToken'})`)
     }
   }
 }
 
 export function fromEvent<T extends any>(event: FunctionEvent<T>, options?: GraphcoolOptions): Graphcool {
-  return new Graphcool(event.context.graphcool.serviceId, { rootToken: event.context.graphcool.rootToken, ...options })
+  return new Graphcool(event.context.graphcool.serviceId, { token: event.context.graphcool.token, ...options })
 }

@@ -1,6 +1,6 @@
 export interface GraphcoolOptions {
   serverEndpoint?: string // by default: 'https://api.graph.cool'
-  rootToken?: string
+  token?: string
 }
 
 export interface FunctionEvent<T extends any> {
@@ -23,7 +23,7 @@ export interface RequestContext {
 }
 
 export interface GraphcoolContext {
-  rootToken: string
+  token: string
   serviceId: string
   alias: string
   // region: 'eu-west-1' | 'us-west-2'

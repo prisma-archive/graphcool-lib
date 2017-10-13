@@ -7,7 +7,7 @@ test('fromEvent', async t => {
   const graphcool = fromEvent(testEvent)
 
   t.is(graphcool.serverEndpoint, 'https://api.graph.cool')
-  t.is(graphcool.rootToken, 'test-root-token')
+  t.is(graphcool.token, 'test-root-token')
 })
 
 test('api', async t => {
@@ -17,7 +17,7 @@ test('api', async t => {
   fetchMock.post(simpleApiEndpoint, { body: { data: { allCats: [{ id: 'cat-1' }] } }, headers: { 'Content-Type': 'application/json' } })
   const response = await api.request('{allCats{id}}')
 
-  t.is(fetchMock.lastOptions().headers.Authorization, `Bearer ${testEvent.context.graphcool.rootToken}`)
+  t.is(fetchMock.lastOptions().headers.Authorization, `Bearer ${testEvent.context.graphcool.token}`)
   t.deepEqual<any>(response, { allCats: [{ id: 'cat-1' }] })
 
   const apiWithCustomToken = graphcool.api('simple/v1', { token: 'custom-token' })
@@ -52,7 +52,7 @@ const testEvent: FunctionEvent<TestData> = {
       httpMethod: 'post'
     },
     graphcool: {
-      rootToken: 'test-root-token',
+      token: 'test-root-token',
       serviceId: 'test-service-id',
       alias: 'test-alias'
     },
