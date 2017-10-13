@@ -4,6 +4,8 @@ import { GraphQLSchema } from 'graphql'
 import { makeRemoteExecutableSchema, introspectSchema } from 'graphql-tools'
 import { HttpLink } from 'apollo-link-http'
 
+export { FunctionEvent, GraphcoolOptions, APIOptions }
+
 export default class Graphcool {
 
   serviceId: string
