@@ -4,6 +4,7 @@
     "rootDir": ".",
     "strictNullChecks": true,
     "target": "es6",
+    "lib": ["es2015", "dom", "esnext.asynciterable"],
     "sourceMap": true,
     "outDir": "dist"
   },
