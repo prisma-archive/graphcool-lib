@@ -1,6 +1,6 @@
 {
   "name": "graphcool-lib",
-  "version": "0.0.4-beta3",
+  "version": "0.0.4-beta4",
   "scripts": {
     "test": "npm run build && rm -f test.out && ava --serial ./dist/test/*.js",
     "prepublish": "npm run build",
