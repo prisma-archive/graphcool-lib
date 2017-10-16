@@ -1,5 +1,5 @@
 import { GraphQLClient } from 'graphql-request'
-import { FunctionEvent, GraphcoolOptions, ScalarObject, APIOptions, APIEndpoint } from './types'
+import { FunctionEvent, GraphcoolOptions, ScalarObject, APIOptions, APIEndpoint, Endpoints } from './types'
 import { GraphQLSchema } from 'graphql'
 import { makeRemoteExecutableSchema, introspectSchema } from 'graphql-tools'
 import { HttpLink } from 'apollo-link-http'
@@ -10,22 +10,26 @@ export default class Graphcool {
 
   serviceId: string
   token?: string
-  serverEndpoint: string
+  endpoints: Partial<Endpoints>
 
   constructor(serviceId: string, options?: GraphcoolOptions) {
     const mergedOptions = {
-      serverEndpoint: 'https://api.graph.cool',
       token: undefined,
+      endpoints: {},
       ...options,
     }
 
+    this.endpoints = mergedOptions.endpoints
     this.serviceId = serviceId
     this.token = mergedOptions.token
-    this.serverEndpoint = mergedOptions.serverEndpoint.replace(/\/$/, '')
+  }
+
+  getFullEndpoint(endpointKey: APIEndpoint = 'simple/v1') {
+    return this.endpoints[endpointKey.split('/')[0]]
   }
 
   api(endpoint: APIEndpoint, options?: APIOptions): GraphQLClient {
-    const url = `${this.serverEndpoint}/${endpoint}/${this.serviceId}`
+    const url = this.getFullEndpoint(endpoint)
     const token = (options && options.token) ? options.token : this.token
 
     if (token) {
@@ -65,8 +69,7 @@ export default class Graphcool {
 
   /** Returns an instance of the Simple API endpoint (based on graphql-tools) */
   async createSchema(): Promise<GraphQLSchema> {
-    const endpoint = `https://api.graph.cool/simple/v1/${this.serviceId}`
-    const link = new HttpLink({ uri: endpoint, fetch })
+    const link = new HttpLink({ uri: this.endpoints.simple, fetch })
     const schema = await introspectSchema(link)
 
     return makeRemoteExecutableSchema({ schema, link })
@@ -89,7 +92,10 @@ export default class Graphcool {
   }
 
   private systemClient(): GraphQLClient {
-    return new GraphQLClient(`${this.serverEndpoint}/system`)
+    if (!this.endpoints.system) {
+      throw new Error('Please provide the system endpoint')
+    }
+    return new GraphQLClient(this.endpoints.system)
   }
 
   private checkRootTokenIsSet(functionName: string): void {
@@ -100,5 +106,12 @@ export default class Graphcool {
 }
 
 export function fromEvent<T extends any>(event: FunctionEvent<T>, options?: GraphcoolOptions): Graphcool {
-  return new Graphcool(event.context.graphcool.serviceId, { token: event.context.graphcool.token, ...options })
+  return new Graphcool(
+    event.context.graphcool.serviceId || event.context.graphcool.projectId!,
+    {
+      token: event.context.graphcool.token,
+      endpoints: event.context.graphcool.endpoints,
+      ...options
+    }
+  )
 }

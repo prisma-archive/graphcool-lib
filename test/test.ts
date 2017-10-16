@@ -6,7 +6,7 @@ import * as fetchMock from 'fetch-mock'
 test('fromEvent', async t => {
   const graphcool = fromEvent(testEvent)
 
-  t.is(graphcool.serverEndpoint, 'https://api.graph.cool')
+  t.is(graphcool.endpoints.simple, 'https://api.graph.cool/simple/v1/test-service-id')
   t.is(graphcool.token, 'test-root-token')
 })
 
@@ -54,7 +54,13 @@ const testEvent: FunctionEvent<TestData> = {
     graphcool: {
       token: 'test-root-token',
       serviceId: 'test-service-id',
-      alias: 'test-alias'
+      alias: 'test-alias',
+      endpoints: {
+        simple: 'https://api.graph.cool/simple/v1/test-service-id',
+        relay: 'https://api.graph.cool/relay/v1/test-service-id',
+        system: 'https://api.graph.cool/system',
+        subscriptions: 'wss://subscriptions.graph.cool/v1/test-service-id',
+      }
     },
     environment: null,
     auth: {
