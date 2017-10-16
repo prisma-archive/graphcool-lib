@@ -1,10 +1,11 @@
 export interface GraphcoolOptions {
-  serverEndpoint?: string // by default: 'https://api.graph.cool'
-  pat?: string
+  // all endpoints besides simple are required
+  endpoints: Partial<Endpoints>
+  token?: string
 }
 
-export interface FunctionEvent {
-  data: any
+export interface FunctionEvent<T extends any> {
+  data: T
   context: Context
 }
 
@@ -22,10 +23,19 @@ export interface RequestContext {
   httpMethod: 'post' | 'put'
 }
 
+export interface Endpoints {
+  simple: string
+  relay: string
+  system: string
+  subscriptions: string
+}
+
 export interface GraphcoolContext {
-  pat: string
-  projectId: string
+  token: string
+  serviceId?: string
   alias: string
+  projectId?: string
+  endpoints: Endpoints
   // region: 'eu-west-1' | 'us-west-2'
   // serverEndpoint: string
 }
