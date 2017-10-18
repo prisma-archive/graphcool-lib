@@ -31,7 +31,7 @@ export interface Endpoints {
 }
 
 export interface GraphcoolContext {
-  token: string
+  rootToken: string
   serviceId?: string
   alias: string
   projectId?: string

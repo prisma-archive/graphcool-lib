@@ -1,5 +1,12 @@
 import { GraphQLClient } from 'graphql-request'
-import { FunctionEvent, GraphcoolOptions, ScalarObject, APIOptions, APIEndpoint, Endpoints } from './types'
+import {
+  FunctionEvent,
+  GraphcoolOptions,
+  ScalarObject,
+  APIOptions,
+  APIEndpoint,
+  Endpoints,
+} from './types'
 import { GraphQLSchema } from 'graphql'
 import { makeRemoteExecutableSchema, introspectSchema } from 'graphql-tools'
 import { HttpLink } from 'apollo-link-http'
@@ -7,7 +14,6 @@ import { HttpLink } from 'apollo-link-http'
 export { FunctionEvent, GraphcoolOptions, APIOptions }
 
 export default class Graphcool {
-
   serviceId: string
   token?: string
   endpoints: Partial<Endpoints>
@@ -30,7 +36,7 @@ export default class Graphcool {
 
   api(endpoint: APIEndpoint, options?: APIOptions): GraphQLClient {
     const url = this.getFullEndpoint(endpoint)
-    const token = (options && options.token) ? options.token : this.token
+    const token = options && options.token ? options.token : this.token
 
     if (token) {
       return new GraphQLClient(url, {
@@ -43,9 +49,7 @@ export default class Graphcool {
     }
   }
 
-  // TODO implement deprecated fallback `generateAuthToken`
-
-  async generateNodeToken(nodeId: string, typeName: string, payload?: ScalarObject): Promise<string> {
+  async generateAuthToken(nodeId: string, typeName: string): Promise<string> {
     this.checkRootTokenIsSet('generateNodeToken')
 
     const query = `
@@ -53,8 +57,8 @@ export default class Graphcool {
         generateNodeToken(input: {
           rootToken: "${this.token}"
           serviceId: "${this.serviceId}"
-          nodeId: "${nodeId}", 
-          modelName: "${typeName}", 
+          nodeId: "${nodeId}"
+          modelName: "${typeName}"
           clientMutationId: "static"
         }) {
           token
@@ -62,7 +66,32 @@ export default class Graphcool {
       }
     `
 
-    const result = await this.systemClient().request<{generateNodeToken: { token: string }}>(query)
+    const result = await this.systemClient().request<{
+      generateNodeToken: { token: string }
+    }>(query)
+
+    return result.generateNodeToken.token
+  }
+  async generateNodeToken(nodeId: string, typeName: string): Promise<string> {
+    this.checkRootTokenIsSet('generateNodeToken')
+
+    const query = `
+      mutation {
+        generateNodeToken(input: {
+          rootToken: "${this.token}"
+          serviceId: "${this.serviceId}"
+          nodeId: "${nodeId}"
+          modelName: "${typeName}"
+          clientMutationId: "static"
+        }) {
+          token
+        }
+      }
+    `
+
+    const result = await this.systemClient().request<{
+      generateNodeToken: { token: string }
+    }>(query)
 
     return result.generateNodeToken.token
   }
@@ -83,11 +112,17 @@ export default class Graphcool {
     throw new Error('Not implemented yet')
   }
 
-  async updateAll(typeName: string, filter?: { [key: string]: any }): Promise<any> {
+  async updateAll(
+    typeName: string,
+    filter?: { [key: string]: any },
+  ): Promise<any> {
     throw new Error('Not implemented yet')
   }
 
-  async deleteAll(typeName: string, filter?: { [key: string]: any }): Promise<any> {
+  async deleteAll(
+    typeName: string,
+    filter?: { [key: string]: any },
+  ): Promise<any> {
     throw new Error('Not implemented yet')
   }
 
@@ -100,18 +135,23 @@ export default class Graphcool {
 
   private checkRootTokenIsSet(functionName: string): void {
     if (this.token == null) {
-      throw new Error(`Graphcool must be instantiated with a rootToken when calling '${functionName}': new Graphcool('service-id', {token: 'rootToken'})`)
+      throw new Error(
+        `Graphcool must be instantiated with a rootToken when calling '${functionName}': new Graphcool('service-id', {token: 'rootToken'})`,
+      )
     }
   }
 }
 
-export function fromEvent<T extends any>(event: FunctionEvent<T>, options?: GraphcoolOptions): Graphcool {
+export function fromEvent<T extends any>(
+  event: FunctionEvent<T>,
+  options?: GraphcoolOptions,
+): Graphcool {
   return new Graphcool(
     event.context.graphcool.serviceId || event.context.graphcool.projectId!,
     {
-      token: event.context.graphcool.token,
+      token: event.context.graphcool.rootToken,
       endpoints: event.context.graphcool.endpoints,
-      ...options
-    }
+      ...options,
+    },
   )
 }
