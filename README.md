@@ -50,7 +50,7 @@ export default async event => {
 ### `.generateNodeToken(nodeId, modelName)`
 Using `.generateNodeToken` you can act on behalf of a User:
 ```ts
-import {fromEvent} from 'graphcool-lib'
+import { fromEvent } from 'graphcool-lib'
 
 export default async event => {
   const client = fromEvent(event)
