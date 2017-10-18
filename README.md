@@ -8,7 +8,7 @@ yarn add graphcool-lib
 
 ## Usage
 
-### .api()
+### `.api()`
 #### Typescript
 ```ts
 import { fromEvent, default as Graphcool, FunctionEvent } from 'graphcool-lib'
@@ -47,7 +47,7 @@ export default async event => {
 
 ```
 
-### .generateNodeToken(nodeId, modelName)
+### `.generateNodeToken(nodeId, modelName)`
 Using `.generateNodeToken` you can act on behalf of a User:
 ```ts
 import {fromEvent} from 'graphcool-lib'
