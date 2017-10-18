@@ -8,8 +8,8 @@ yarn add graphcool-lib
 
 ## Usage
 
-
-### Typescript
+### .api()
+#### Typescript
 ```ts
 import { fromEvent, default as Graphcool, FunctionEvent } from 'graphcool-lib'
 
@@ -29,8 +29,7 @@ export default async (event: FunctionEvent) => {
   }
 }
 ```
-
-### Javascript
+#### Javascript
 ```js
 import { fromEvent } from 'graphcool-lib'
 
@@ -46,4 +45,25 @@ export default async event => {
   }
 }
 
+```
+
+### .generateNodeToken(nodeId, modelName)
+Using `.generateNodeToken` you can act on behalf of a User:
+```ts
+import {fromEvent} from 'graphcool-lib'
+
+export default async event => {
+  const client = fromEvent(event)
+  const onbehalfToken = await client.generateAuthToken('cj8a9rex1i5eg0170k116mfme', 'User')
+  const api = client.api('simple/v1', {token: onbehalfToken})
+  const result = await api.request(`{allUsers{id}}`)
+
+  return {
+    data: {
+      message: {
+        result,
+      }
+    }
+  }
+}
 ```
