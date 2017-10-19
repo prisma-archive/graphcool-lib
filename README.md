@@ -54,7 +54,7 @@ import { fromEvent } from 'graphcool-lib'
 
 export default async event => {
   const client = fromEvent(event)
-  const onbehalfToken = await client.generateAuthToken('cj8a9rex1i5eg0170k116mfme', 'User')
+  const onbehalfToken = await client.generateNodeToken('cj8a9rex1i5eg0170k116mfme', 'User')
   const api = client.api('simple/v1', {token: onbehalfToken})
   const result = await api.request(`{allUsers{id}}`)
 
