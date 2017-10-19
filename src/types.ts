@@ -4,7 +4,7 @@ export interface GraphcoolOptions {
   token?: string
 }
 
-export interface FunctionEvent<T extends any> {
+export interface FunctionEvent<T extends any = {}> {
   data: T
   context: Context
 }

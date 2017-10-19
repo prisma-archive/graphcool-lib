@@ -78,8 +78,10 @@ export default class Graphcool {
 
     return result.generateNodeToken.token
   }
-  async generateNodeToken(nodeId: string, typeName: string): Promise<string> {
+  async generateNodeToken(nodeId: string, typeName: string, expirationInSeconds?: number): Promise<string> {
     this.checkRootTokenIsSet('generateNodeToken')
+
+    const expiration = expirationInSeconds ? `expirationInSeconds: ${expirationInSeconds}` : ''
 
     const query = `
       mutation {
@@ -89,6 +91,7 @@ export default class Graphcool {
           nodeId: "${nodeId}"
           modelName: "${typeName}"
           clientMutationId: "static"
+          ${expiration}
         }) {
           token
         }
