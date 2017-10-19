@@ -1,6 +1,6 @@
 export interface GraphcoolOptions {
   // all endpoints besides simple are required
-  endpoints: Partial<Endpoints>
+  endpoints?: Partial<Endpoints>
   token?: string
 }
 

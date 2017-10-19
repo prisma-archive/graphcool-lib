@@ -16,13 +16,19 @@ export { FunctionEvent, GraphcoolOptions, APIOptions }
 export default class Graphcool {
   serviceId: string
   token?: string
-  endpoints: Partial<Endpoints>
+  endpoints: Endpoints
 
   constructor(serviceId: string, options?: GraphcoolOptions) {
     const mergedOptions = {
       token: undefined,
-      endpoints: {},
       ...options,
+      endpoints: {
+        simple: `https://api.graph.cool/simple/v1/${serviceId}`,
+        relay: `https://api.graph.cool/relay/v1/${serviceId}`,
+        system: `https://api.graph.cool/system`,
+        subscriptions: `https://api.graph.cool/simple/v1/${serviceId}`,
+        ...(options ? options.endpoints : {})
+      },
     }
 
     this.endpoints = mergedOptions.endpoints
