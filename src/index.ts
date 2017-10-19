@@ -34,7 +34,7 @@ export default class Graphcool {
     return this.endpoints[endpointKey.split('/')[0]]
   }
 
-  api(endpoint: APIEndpoint, options?: APIOptions): GraphQLClient {
+  api(endpoint: APIEndpoint = 'simple/v1', options?: APIOptions): GraphQLClient {
     const url = this.getFullEndpoint(endpoint)
     const token = options && options.token ? options.token : this.token
 
