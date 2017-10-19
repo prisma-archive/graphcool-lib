@@ -26,7 +26,7 @@ export default class Graphcool {
         simple: `https://api.graph.cool/simple/v1/${serviceId}`,
         relay: `https://api.graph.cool/relay/v1/${serviceId}`,
         system: `https://api.graph.cool/system`,
-        subscriptions: `https://api.graph.cool/simple/v1/${serviceId}`,
+        subscriptions: `wss://subscriptions.graph.cool/v1/${serviceId}`,
         ...(options ? options.endpoints : {})
       },
     }
